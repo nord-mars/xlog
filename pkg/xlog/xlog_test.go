@@ -5,12 +5,18 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path"
 	"path/filepath"
 	"regexp"
 	"testing"
 	"time"
 
-	"github.com/nord-mars/xlog"
+	"github.com/nord-mars/xlog/pkg/xlog"
+)
+
+var (
+	filename string = "/tmp/xlog_test.log"
+	filemask string = "xlog*.log"
 )
 
 // Read one line from file
@@ -33,14 +39,16 @@ func readOneLine(filename *string) (string, error) {
 }
 
 // clean files after test
-func cleanFiles(filemask *string) {
+func cleanFiles(filename *string, filemask *string) {
 
-	path, err := os.Getwd()
-	if err != nil {
-		log.Fatal(err)
-	}
+	// path, err := os.Getwd()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 
-	files, err := filepath.Glob(path + "/" + *filemask)
+	dir := path.Dir(*filename)
+
+	files, err := filepath.Glob(dir + "/" + *filemask)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -54,19 +62,19 @@ func cleanFiles(filemask *string) {
 
 //
 func isFileExist(t *testing.T, filename *string) {
-	path, err := os.Getwd()
-	if err != nil {
-		t.Fatal(err)
-	}
+	// path, err := os.Getwd()
+	// if err != nil {
+	// 	t.Fatal(err)
+	// }
 
 	// is file created ?
-	if _, err := os.Stat(path + "/" + *filename); os.IsNotExist(err) {
+	if _, err := os.Stat(*filename); os.IsNotExist(err) {
 		t.Fatalf("File not exist: [%v]", err)
 	}
 }
 
-// Test: table driven - xlog flags
-func Test_FlagLdate(t *testing.T) {
+// Test: table driven - Xlog flags
+func Test_WriteFlagCheck(t *testing.T) {
 	scenario := []struct {
 		input  int
 		expect string
@@ -83,16 +91,13 @@ func Test_FlagLdate(t *testing.T) {
 		{input: xlog.FILE_PID, expect: `INFO`},
 	}
 
-	filename := "xlog_test.log"
-	filemask := "xlog*.log"
-
 	for _, s := range scenario {
 
-		// Creatw log and write one line
+		// Create log and write one line
 		Log := xlog.New(filename, 10, s.input)
 		Log.Write(0, xlog.INFO, fmt.Sprintf("flag: %014b", s.input))
 		defer func() {
-			cleanFiles(&filemask)
+			cleanFiles(&filename, &filemask)
 		}()
 
 		// is file created ?
@@ -116,14 +121,11 @@ func Test_FlagLdate(t *testing.T) {
 	time.Sleep(1 * time.Second)
 }
 
-//
-func Benchmark_Logger(b *testing.B) {
-	filename := "xlog_test.log"
-	filemask := "xlog*.log"
+func Benchmark_Xlog(b *testing.B) {
 
 	Log := xlog.New(filename, 10, log.Ldate|log.Ltime|log.Lmicroseconds|log.Lmsgprefix|xlog.LINE_CALL|xlog.LINE_PID|xlog.FILE_PID|xlog.FILE_DATE|xlog.FILE_TIME)
 	defer func() {
-		cleanFiles(&filemask)
+		cleanFiles(&filename, &filemask)
 	}()
 
 	b.StartTimer()

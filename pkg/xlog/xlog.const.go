@@ -5,24 +5,29 @@ type messageType int
 
 const (
 	INFO messageType = 0 + iota
-	WARNING
+	WARN
 	ERROR
 	FATAL
 )
 
 // Linux console color
 const (
-	InfoColor    = "\033[1;34m%s\033[0m"
-	WarningColor = "\033[1;33m%s\033[0m"
-	ErrorColor   = "\033[1;31m%s\033[0m"
-	FatalColor   = "\033[1;35m%s\033[40;5m"
+	ColorInfo    = "\033[1;34m%s\033[0m"
+	ColorWarning = "\033[1;33m%s\033[0m"
+	ColorError   = "\033[1;31m%s\033[0m"
+	ColorFatal   = "\033[1;35m%s\033[40;5m"
 )
 
-// logger flags
+// xlog flags
+// logger flags: append fields
 const (
-	LINE_PID  = 512  // append PID  to log - 1 << 9
-	LINE_CALL = 1024 // add __FILE__:__LINE__
-	FILE_DATE = 2048 // append DATE to filename.PID.log
-	FILE_TIME = 4096 // append TILE to filename.PID.log
-	FILE_PID  = 8192 // add PID to filename.PID.log - 1 << 9
+	// FILE - filename
+	FILE_DATE = 1 << 10 // FILE: append DATE to filename.DATE.log
+	FILE_TIME = 1 << 11 // FILE: append TIME to filename.TIME.log
+	FILE_PID  = 1 << 12 // FILE: append PID  to filename.PID.log
+	// LINE - log fields
+	LINE_PID  = 1 << 13 // LINE: add PID
+	LINE_CALL = 1 << 14 // LINE: add __FILE__:__LINE__
+	LINE_HOST = 1 << 15 // LINE: add HOSTNAME
+	LINE_APP  = 1 << 16 // LINE: add Application name
 )

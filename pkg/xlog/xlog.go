@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"time"
@@ -12,11 +13,11 @@ import (
 
 // Main interface
 type LogInterface interface {
-	Write(debugLevel int, messagetype messageType, message ...string)
+	Write(debugLevel int, messagetype messageType, format string, message ...string)
 }
 
 // Main class
-type Xlog struct {
+type Logger struct {
 	*log.Logger
 	level int
 	flags int
@@ -31,43 +32,60 @@ func init() {
 
 // Constract new logger object - open/create the log file
 //  filename - full path to log file example: [/var/log/server/my_sever.log]
-//  level    - debug lavel
+//  level    - debug level
 //  lflag    - log.flag: Ldate | Ltime | Lmicroseconds | Llongfile | Lshortfile | LUTC | Lmsgprefix | LstdFlags
 //             logger.FILE_LINE: add __FILE__:__LINE__ . WARNING: debug only - two time slow
 //             logger.FILE_PID      : add PID to filename.PID.log
 //             logger.FILE_DATE     : add DATE to filename.YYYY-MM-DD.log
 //             logger.FILE_TIME     : add TIME to filename.hh:mm:ss.log
 //             logger.LINE_PID      :
-func New(basename string, level int, flags int) *Xlog {
+func New(logname string, level int, flags int) *Logger {
 	// make file name
-	var ext = path.Ext(basename)
-	filename := strings.TrimSuffix(path.Clean(basename), ext)
+	var ext = path.Ext(logname)
+	filename := strings.TrimSuffix(path.Clean(logname), ext)
 
+	// FILENAME: add PID
 	if (flags & FILE_PID) == FILE_PID {
 		dir := path.Dir(filename)
 		if dir == "." {
 			dir = ""
 		}
-		filename = fmt.Sprintf("%s%s.%d", dir, path.Base(filename), os.Getpid())
+		filename = fmt.Sprintf("%s/%s.%d", dir, path.Base(filename), os.Getpid())
 	}
 
+	// FILENAME: add YYYY-MM-DD
 	if (flags & FILE_DATE) == FILE_DATE {
 		now := time.Now()
 		filename = fmt.Sprintf("%s.%04d-%02d-%02d", filename, now.Year(), now.Month(), now.Day())
 	}
 
+	// FILENAME: add HH:MM:SS
 	if (flags & FILE_TIME) == FILE_TIME {
 		now := time.Now()
 		filename = fmt.Sprintf("%s.%02d:%02d:%02d", filename, now.Hour(), now.Minute(), now.Second())
 	}
 
 	filename = fmt.Sprintf("%s%s", filename, ext)
-	//fmt.Println(filename)
 
-	// add [PID]
+	// LOGLINE: add [PID]
 	var prefix string = ""
 	if (flags & LINE_PID) == LINE_PID {
 		prefix = fmt.Sprintf("[%d] ", os.Getpid())
+	}
+
+	// LOGLINE: add [HOSTNAME]
+	if (flags & LINE_HOST) == LINE_HOST {
+		name, err := os.Hostname()
+		if err != nil {
+			panic(err)
+		}
+		prefix += fmt.Sprintf("[%s] ", name)
+	}
+
+	// LOGLINE: add [program name]
+	if (flags & LINE_APP) == LINE_APP {
+		filename := filepath.Base(os.Args[0])
+		prefix += fmt.Sprintf("[%s] ", filename)
 	}
 
 	// flag by default
@@ -80,46 +98,69 @@ func New(basename string, level int, flags int) *Xlog {
 		log.Fatal(err)
 	}
 
-	return &Xlog{
+	return &Logger{
 		log.New(file, prefix, flags),
 		level,
 		flags,
 	}
 }
 
+// Add Program(Application) name to log prefix.
+// usefull to log analizator
+func (self *Logger) SetProgramName(name string) {
+	self.SetPrefix(fmt.Sprintf("%s[%s] ", self.Prefix(), name))
+}
+
+// get debug level
+func (self *Logger) DebugLevel(level int) int {
+	return self.level
+}
+
+// Change debug level
+// Runtime up/down level
+// Up if problem.
+// Down to speedup.
+func (self *Logger) SetDebugLevel(level int) {
+	self.level = level
+}
+
 // Append the message to log file.
-//   debugLevel  - compare with object lavel to print or not
+//   debugLevel  - compare with object level to print or not
 //   messagetype - INFO / WARNING / ERROR / FATAL
 //      INFO / WARNING / ERROR - append message to log
 //      FATAL - append message, call STACK and EXIT the programm
-//   message - strig varables array
-func (l *Xlog) Write(debugLevel int, messagetype messageType, message ...string) {
+//   format  - string message format
+//   message - string varables array
+func (self *Logger) Write(debugLevel int, messagetype messageType, format string, message ...string) {
 
-	if l.level < debugLevel {
+	if self.level < debugLevel {
 		return
 	}
 
 	// Append to message: __FILE__:__LINE__
 	var dbg string = ""
-	if (l.flags & LINE_CALL) == LINE_CALL {
+	if (self.flags & LINE_CALL) == LINE_CALL {
 		_, filename, line, _ := runtime.Caller(1)
 		dbg = fmt.Sprintf("%s:%d: ", path.Base(filename), line)
 	}
 
+	msg := ""
 	switch messagetype {
 	case INFO:
-		l.Printf("%s  INFO - %s", dbg, message)
-	case WARNING:
-		l.Printf("%s  WARN - %s", dbg, message)
+		msg = fmt.Sprintf("%s  INFO - "+format, dbg, message)
+	case WARN:
+		msg = fmt.Sprintf("%s  WARN - "+format, dbg, message)
 	case ERROR:
-		l.Printf("%s ERROR - %s", dbg, message)
+		msg = fmt.Sprintf("%s ERROR - "+format, dbg, message)
 	case FATAL:
 		_, filename, line, _ := runtime.Caller(1)
-		l.Printf("%s:%d: FATAL - %s", filename, line, message)
+		msg = fmt.Sprintf("%s:%d: FATAL - "+format, filename, line, message)
 		stackSlice := make([]byte, 512)
 		count := runtime.Stack(stackSlice, false)
 		if count > 0 {
-			l.Printf("  CALL STACK:\n%s", stackSlice[0:count])
+			msg += fmt.Sprintf("  CALL STACK:\n%s", stackSlice[0:count])
 		}
 	}
+
+	self.Printf(msg)
 }

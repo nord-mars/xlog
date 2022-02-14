@@ -38,21 +38,21 @@ func NewConsole() *console {
 func (l *console) WriteConsole(messagetype messageType, message ...string) {
 	switch messagetype {
 	case INFO:
-		fmt.Printf(InfoColor, fmt.Sprintf("\nInformation: \n%s\n", message))
-	case WARNING:
-		fmt.Printf(WarningColor, fmt.Sprintf("\nWarning: \n%s\n", message))
+		fmt.Printf(ColorInfo, fmt.Sprintf("\nInformation: \n%s\n", message))
+	case WARN:
+		fmt.Printf(ColorWarning, fmt.Sprintf("\nWarning: \n%s\n", message))
 	case ERROR:
-		fmt.Printf(ErrorColor, fmt.Sprintf("\nError: \n%s\n", message))
+		fmt.Printf(ColorError, fmt.Sprintf("\nError: \n%s\n", message))
 	case FATAL:
 		_, filename, line, _ := runtime.Caller(1)
-		fmt.Printf(FatalColor,
+		fmt.Printf(ColorFatal,
 			fmt.Sprintf("\nFatal: \n%s\n%s\n",
 				filename+":"+strconv.Itoa(line),
 				message))
 		stackSlice := make([]byte, 512)
 		count := runtime.Stack(stackSlice, false)
 		if count > 0 {
-			fmt.Printf(FatalColor,
+			fmt.Printf(ColorFatal,
 				fmt.Sprintf("%d stack:\n%s",
 					l.pid,
 					stackSlice[0:count]))
