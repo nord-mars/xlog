@@ -7,23 +7,24 @@
 go get -u github.com/nord-mars/xlog
 ```
 
+## Description
 * Summary:
   - Log level
   - Log category
   - Log fields
   - Log filename
 
-## Log level
+### Log level
 debug_level (global): write or skip record to log
 
-## Log category
+### Log category
 * Log record category:
   - INFO
   - WARN
   - ERROR
   - FATAL - add call stuck to log
 
-## Log fields
+### Log fields
 * Standard:
   - Ldate         - DATE field. Example: 2020/12/15
   - Ltime         - TIME field. Example: 06:19:41
@@ -36,7 +37,7 @@ debug_level (global): write or skip record to log
   - LINE_HOST - prefix: add [HOSTMAME]
   - LINE_APP  - prefix: add [APPNAME]
 
-## Log filename
+### Log filename
 * Field descriptions:
   - FILE_PID  - add filename.PID.log (split logs for same time application)
   - FILE_DATE - add filename.DATE.log

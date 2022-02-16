@@ -13,7 +13,7 @@ import (
 
 // Main interface
 type LogInterface interface {
-	Write(debugLevel int, messagetype messageType, format string, message ...string)
+	Write(debugLevel int, messagetype messageType, format string, message ...interface{})
 }
 
 // Main class
@@ -131,7 +131,7 @@ func (self *Logger) SetDebugLevel(level int) {
 //      FATAL - append message, call STACK and EXIT the programm
 //   format  - string message format
 //   message - string varables array
-func (self *Logger) Write(debugLevel int, messagetype messageType, format string, message ...string) {
+func (self *Logger) Write(debugLevel int, messagetype messageType, format string, message ...interface{}) {
 
 	if self.level < debugLevel {
 		return

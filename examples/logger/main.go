@@ -34,47 +34,48 @@ func main() {
 
 	iLog = myLog // Inject Logger to packet
 
+	// INFO - debugLevel
 	myLog.Write(0, xlog.INFO, "------------------START-----------------------")
 	myLog.Write(1, xlog.INFO, "this is an information message!")
 	myLog.Write(2, xlog.INFO, "this is an", "concated", "string!")
-	myLog.Write(3, xlog.INFO, "this is     print (debugLevel < 3)!")
-	myLog.Write(4, xlog.INFO, "this is not print (debugLevel < 4)!")
+	myLog.Write(3, xlog.INFO, "this is     print (debugLevel < %d)!", debugLevel)
+	myLog.Write(4, xlog.INFO, "this is not print (debugLevel < %d)!", debugLevel)
 
-	// xlod
+	// WARN, ERROR, FATAL
 	myLog.Write(0, xlog.WARN, "this is an warning!")
 	myLog.Write(0, xlog.ERROR, "this is an error!")
 	//	Log.Write(0, xlog.FATAL,   "we crashed")
 
 	// ------------------------------------
-	// Print: Ouput RAW message to FILE.log
+	// Print: Output RAW message to FILE.log
 	myLog.Print("PRINT: one string message\n")
 	myLog.Printf("PRINTF: %d\n", 4)
 	myLog.Println("PRINTLN: ", "New line message")
 
 	// Fatal: Output to FILE.log and console
-	//	Log.Fatal(  "Programm stop, return [exit status 1]\n")
-	//	Log.Fatalln("Programm stop, return [exit status 1]")
-	//	Log.Fatalf( "Programm stop, return [exit status 1]\n")
+	//	Log.Fatal(  "Program stop, return [exit status 1]\n")
+	//	Log.Fatalln("Program stop, return [exit status 1]")
+	//	Log.Fatalf( "Program stop, return [exit status 1]\n")
 
 	// Panic: Output console only
-	//	Log.Panic(  "Programm stop, return [exit status 2] and print call stack to console.\n")
-	//	Log.Panicf( "Programm stop, return [exit status 2] and print call stack to console. %d\n", 100)
-	//	Log.Panicln("Programm stop, return [exit status 2] and print call stack to console.")
+	//	Log.Panic(  "Program stop, return [exit status 2] and print call stack to console.\n")
+	//	Log.Panicf( "Program stop, return [exit status 2] and print call stack to console. %d\n", 100)
+	//	Log.Panicln("Program stop, return [exit status 2] and print call stack to console.")
 
 	// ------------------------------------
 	// Call stack example
-	wraperFirst()
+	wrapperFirst()
 }
 
-func wraperFirst() {
-	wraperSecond()
+func wrapperFirst() {
+	wrapperSecond()
 }
 
-func wraperSecond() {
-	wraperFatal()
+func wrapperSecond() {
+	wrapperFatal()
 }
 
 // CALL STACK example
-func wraperFatal() {
+func wrapperFatal() {
 	iLog.Write(0, xlog.FATAL, "we crashed")
 }

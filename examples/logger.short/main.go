@@ -11,28 +11,28 @@ func main() {
 
 	debugLevel := 3
 
-	Log := xlog.NewShort("/tmp/main_short.log", "xLogShortExample", debugLevel)
+	myLog := xlog.NewShort("/tmp/main_short.log", "xLogShortExample", debugLevel)
 
-	iLog = Log // Inject Loger to packet
+	iLog = myLog // Inject Loger to packet
 
-	Log.Write(0, xlog.INFO, "------------------START-----------------------")
-	Log.Write(1, xlog.INFO, "this is an information message!")
-	Log.Write(2, xlog.INFO, "this is an", "concated", "string!")
-	Log.Write(3, xlog.INFO, "this is     print (debugLevel < 3)!")
-	Log.Write(4, xlog.INFO, "this is not print (debugLevel < 4)!")
+	myLog.Write(0, xlog.INFO, "------------------START-----------------------")
+	myLog.Write(1, xlog.INFO, "this is an information message!")
+	myLog.Write(2, xlog.INFO, "this is an", "concated", "string!")
+	myLog.Write(3, xlog.INFO, "this is     print (debugLevel < 3)!")
+	myLog.Write(4, xlog.INFO, "this is not print (debugLevel < 4)!")
 
-	wraperFirst()
+	wrapperFirst()
 }
 
-func wraperFirst() {
-	wraperSecond()
+func wrapperFirst() {
+	wrapperSecond()
 }
 
-func wraperSecond() {
-	wraperFatal()
+func wrapperSecond() {
+	wrapperFatal()
 }
 
 // CALL STACK example
-func wraperFatal() {
+func wrapperFatal() {
 	iLog.Write(0, xlog.FATAL, "we crashed")
 }
