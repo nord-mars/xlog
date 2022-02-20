@@ -7,7 +7,7 @@ const (
 	INFO messageType = 0 + iota
 	WARN
 	ERROR
-	FATAL // call stuck
+	FATAL // log the call stack
 )
 
 // Linux console color

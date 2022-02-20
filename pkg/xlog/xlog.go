@@ -35,14 +35,20 @@ func init() {
 }
 
 // Constract new logger object - open/create the log file
-//  filename - full path to log file example: [/var/log/server/my_sever.log]
+//  filename - full path to log file. Example: [/var/log/server/my_sever.log]
 //  level    - debug level
-//  lflag    - log.flag: Ldate | Ltime | Lmicroseconds | Llongfile | Lshortfile | LUTC | Lmsgprefix | LstdFlags
-//             logger.FILE_LINE: add __FILE__:__LINE__ . WARNING: debug only - two time slow
-//             logger.FILE_PID      : add PID to filename.PID.log
-//             logger.FILE_DATE     : add DATE to filename.YYYY-MM-DD.log
-//             logger.FILE_TIME     : add TIME to filename.hh:mm:ss.log
-//             logger.LINE_PID      :
+//  flags    - modify
+//    file flag:
+//           FILE_PID  : add PID  to filename.PID.log
+//           FILE_DATE : add DATE to filename.YYYY-MM-DD.log
+//           FILE_TIME : add TIME to filename.hh:mm:ss.log
+//    line log flag:
+//           log.flag: Ldate | Ltime | Lmicroseconds | Llongfile | Lshortfile | LUTC | Lmsgprefix | LstdFlags
+//    line custom flag:
+//           LINE_CALL : add __FILE__:__LINE__ . WARNING: debug only - two time slow
+//           LINE_PID  :
+//           LINE_HOST :
+//           LINE_APP  :
 func New(logname string, level int, flags int) *Logger {
 	// make file name
 	var ext = path.Ext(logname)
@@ -110,7 +116,7 @@ func New(logname string, level int, flags int) *Logger {
 }
 
 // Add Program(Application) name to log prefix.
-// usefull to log analizator
+// Field ProgramName usefull for log analizator
 func (self *Logger) SetProgramName(name string) {
 	self.SetPrefix(fmt.Sprintf("%s[%s] ", self.Prefix(), name))
 }
@@ -132,7 +138,7 @@ func (self *Logger) SetDebugLevel(level int) {
 //   debugLevel  - compare with object level to print or not
 //   messagetype - INFO / WARNING / ERROR / FATAL
 //      INFO / WARNING / ERROR - append message to log
-//      FATAL - append message, call STACK and EXIT the programm
+//      FATAL - append message, call stack
 //   format  - string message format
 //   message - string varables array
 func (self *Logger) Write(debugLevel int, messagetype messageType, format string, message ...interface{}) {
