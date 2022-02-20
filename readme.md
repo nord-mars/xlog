@@ -15,7 +15,7 @@ go get -u github.com/nord-mars/xlog
   - Log filename
 
 ### Log level
-debug_level (global): write or skip record to log
+debug_level (global variable): write or skip record to log
 
 ### Log category
 * Log record category:

@@ -15,11 +15,15 @@ func main() {
 
 	iLog = myLog // Inject Loger to packet
 
-	myLog.Write(0, xlog.INFO, "------------------START-----------------------")
-	myLog.Write(1, xlog.INFO, "this is an information message!")
-	myLog.Write(2, xlog.INFO, "this is an", "concated", "string!")
-	myLog.Write(3, xlog.INFO, "this is     print (debugLevel < 3)!")
-	myLog.Write(4, xlog.INFO, "this is not print (debugLevel < 4)!")
+	myLog.WriteI(0, "------------------START-----------------------")
+	myLog.WriteI(1, "this is an information message")
+	myLog.WriteI(2, "this is an", "concated", "string!")
+	myLog.WriteI(3, "this is     print (debugLevel < 3)!")
+	myLog.WriteI(4, "this is not print (debugLevel < 4)!")
+
+	myLog.WriteE(0, "this is the ERROR")
+	myLog.WriteW(0, "this is the WaRNING")
+	myLog.WriteD(0, "this is the DUMP")
 
 	wrapperFirst()
 }

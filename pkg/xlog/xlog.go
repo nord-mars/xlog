@@ -11,9 +11,13 @@ import (
 	"time"
 )
 
-// Main interface
+// inject interface
 type LogInterface interface {
 	Write(debugLevel int, messagetype messageType, format string, message ...interface{})
+	WriteI(debugLevel int, format string, message ...interface{})
+	WriteW(debugLevel int, format string, message ...interface{})
+	WriteE(debugLevel int, format string, message ...interface{})
+	WriteD(debugLevel int, format string, message ...interface{})
 }
 
 // Main class
@@ -153,14 +157,36 @@ func (self *Logger) Write(debugLevel int, messagetype messageType, format string
 	case ERROR:
 		msg = fmt.Sprintf("%s ERROR - "+format, dbg, message)
 	case FATAL:
-		_, filename, line, _ := runtime.Caller(1)
-		msg = fmt.Sprintf("%s:%d: FATAL - "+format, filename, line, message)
-		stackSlice := make([]byte, 512)
-		count := runtime.Stack(stackSlice, false)
-		if count > 0 {
-			msg += fmt.Sprintf("  CALL STACK:\n%s", stackSlice[0:count])
+		_, filename, line, ok := runtime.Caller(1)
+		if ok {
+			msg = fmt.Sprintf("%s:%d: FATAL - "+format, filename, line, message)
+			stackSlice := make([]byte, 512)
+			count := runtime.Stack(stackSlice, false)
+			if count > 0 {
+				msg += fmt.Sprintf("  CALL STACK:\n%s", stackSlice[0:count])
+			}
 		}
 	}
 
 	self.Printf(msg)
+}
+
+// Wrapper: write INFO
+func (self *Logger) WriteI(debugLevel int, format string, message ...interface{}) {
+	self.Write(debugLevel, INFO, format, message)
+}
+
+// Wrapper: write WARNING
+func (self *Logger) WriteW(debugLevel int, format string, message ...interface{}) {
+	self.Write(debugLevel, WARN, format, message)
+}
+
+// Wrapper: write ERROR
+func (self *Logger) WriteE(debugLevel int, format string, message ...interface{}) {
+	self.Write(debugLevel, ERROR, format, message)
+}
+
+// Wrapper: write DUMP
+func (self *Logger) WriteD(debugLevel int, format string, message ...interface{}) {
+	self.Write(debugLevel, FATAL, format, message)
 }
