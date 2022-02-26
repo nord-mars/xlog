@@ -23,8 +23,9 @@ type LogInterface interface {
 // Main class
 type Logger struct {
 	*log.Logger
-	level int
-	flags int
+	level     int
+	flags     int
+	callLevel int
 }
 
 //
@@ -112,6 +113,7 @@ func New(logname string, level int, flags int) *Logger {
 		log.New(file, prefix, flags),
 		level,
 		flags,
+		1,
 	}
 }
 
@@ -150,7 +152,7 @@ func (self *Logger) Write(debugLevel int, messagetype messageType, format string
 	// Append to message: __FILE__:__LINE__
 	var dbg string = ""
 	if (self.flags & LINE_CALL) == LINE_CALL {
-		_, filename, line, _ := runtime.Caller(1)
+		_, filename, line, _ := runtime.Caller(self.callLevel)
 		dbg = fmt.Sprintf("%s:%d: ", path.Base(filename), line)
 	}
 
@@ -163,7 +165,7 @@ func (self *Logger) Write(debugLevel int, messagetype messageType, format string
 	case ERROR:
 		msg = fmt.Sprintf("%s ERROR - "+format, dbg, message)
 	case FATAL:
-		_, filename, line, ok := runtime.Caller(1)
+		_, filename, line, ok := runtime.Caller(self.callLevel)
 		if ok {
 			msg = fmt.Sprintf("%s:%d: FATAL - "+format, filename, line, message)
 			stackSlice := make([]byte, 512)
@@ -179,20 +181,24 @@ func (self *Logger) Write(debugLevel int, messagetype messageType, format string
 
 // Wrapper: write INFO
 func (self *Logger) WriteI(debugLevel int, format string, message ...interface{}) {
-	self.Write(debugLevel, INFO, format, message)
+	self.callLevel = 2
+	self.Write(debugLevel, INFO, format, message...)
 }
 
 // Wrapper: write WARNING
 func (self *Logger) WriteW(debugLevel int, format string, message ...interface{}) {
-	self.Write(debugLevel, WARN, format, message)
+	self.callLevel = 2
+	self.Write(debugLevel, WARN, format, message...)
 }
 
 // Wrapper: write ERROR
 func (self *Logger) WriteE(debugLevel int, format string, message ...interface{}) {
-	self.Write(debugLevel, ERROR, format, message)
+	self.callLevel = 2
+	self.Write(debugLevel, ERROR, format, message...)
 }
 
 // Wrapper: write DUMP
 func (self *Logger) WriteD(debugLevel int, format string, message ...interface{}) {
-	self.Write(debugLevel, FATAL, format, message)
+	self.callLevel = 2
+	self.Write(debugLevel, FATAL, format, message...)
 }

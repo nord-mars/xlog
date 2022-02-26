@@ -7,6 +7,11 @@
 go get -u github.com/nord-mars/xlog
 ```
 
+## Documentation
+* [logger](https://github.com/nord-mars/xlog/tree/main/examples/logger)
+* [logger.short](https://github.com/nord-mars/xlog/tree/main/examples/logger.short)
+* [logger.speed](https://github.com/nord-mars/xlog/tree/main/examples/logger.speed)
+
 ## Description
 * Summary:
   - Log level
@@ -44,3 +49,4 @@ debug_level (global variable): write or skip record to log
   - FILE_TIME - add filename.TIME.log
 
 ## License
+Use of this source code is governed by a BSD-style
