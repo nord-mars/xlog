@@ -8,9 +8,9 @@ go get -u github.com/nord-mars/xlog
 ```
 
 ## Documentation
-* [logger](https://github.com/nord-mars/xlog/tree/main/examples/logger)
-* [logger.short](https://github.com/nord-mars/xlog/tree/main/examples/logger.short)
-* [logger.speed](https://github.com/nord-mars/xlog/tree/main/examples/logger.speed)
+* [logger](https://github.com/nord-mars/xlog/tree/main/examples/logger) - example full log setup
+* [logger.short](https://github.com/nord-mars/xlog/tree/main/examples/logger.short) - example short log setup
+* [logger.speed](https://github.com/nord-mars/xlog/tree/main/examples/logger.speed) - example log speed
 
 ## Description
 * Log level    - write log or not
