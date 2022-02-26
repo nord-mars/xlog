@@ -13,23 +13,22 @@ go get -u github.com/nord-mars/xlog
 * [logger.speed](https://github.com/nord-mars/xlog/tree/main/examples/logger.speed)
 
 ## Description
-* Summary:
-  - Log level
-  - Log category
-  - Log fields
-  - Log filename
+* Log level    - write log or not
+* Log category - Constant: log field status
+* Log fields   - FLAG: setup additional log fields
+* Log filename - FLAG: setup log file name
 
 ### Log level
 debug_level (global variable): write or skip record to log
 
-### Log category
+### FLAG for Log category
 * Log record category:
   - INFO
   - WARN
   - ERROR
   - FATAL - add call stuck to log
 
-### Log fields
+### FLAG for Log fields
 * Standard:
   - Ldate         - DATE field. Example: 2020/12/15
   - Ltime         - TIME field. Example: 06:19:41
@@ -42,7 +41,7 @@ debug_level (global variable): write or skip record to log
   - LINE_HOST - prefix: add [HOSTMAME]
   - LINE_APP  - prefix: add [APPNAME]
 
-### Log filename
+### FLAG for Log filename
 * Field descriptions:
   - FILE_PID  - add filename.PID.log (split logs for same time application)
   - FILE_DATE - add filename.DATE.log
