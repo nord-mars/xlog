@@ -1,5 +1,4 @@
-# Xlog - golang library with additional log features
-
+# Xlog - extend golang log
 
 ## Install
 
@@ -21,12 +20,11 @@ go get -u github.com/nord-mars/xlog
 ### Log level
 debug_level (global variable): write or skip record to log
 
-### FLAG for Log category
-* Log record category:
-  - INFO
-  - WARN
-  - ERROR
-  - FATAL - add call stuck to log
+### Constants describing the category of the log entry:
+* INFO - the information record
+* WARN - the warning record
+* ERROR - the error record
+* FATAL - the fatal record and call stuck
 
 ### FLAG for Log fields
 * Standard:
